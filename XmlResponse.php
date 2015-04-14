@@ -135,10 +135,18 @@ class XmlResponse extends Response {
      * @access public
      * @param string $prm_elementName An element's name
      * @param string $prm_ElementText An element's text
+     * @throws \InvalidArgumentException
      * @return null
      */
     protected function setElement($prm_elementName, $prm_ElementText)
     {
+        if (!isset($prm_elementName)) {
+            throw new \InvalidArgumentException('Element name cannot be null. ' . var_export($prm_elementName, true));
+        }
+        if (is_numeric($prm_elementName)) {
+            throw new \InvalidArgumentException();
+//            throw new \InvalidArgumentException('Element name cannot be entirely numeric. ' . var_export($prm_elementName, true));
+        }
         $this->xml_writer->startElement($prm_elementName);
         $this->xml_writer->text($prm_ElementText);
         $this->xml_writer->endElement();
