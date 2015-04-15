@@ -50,10 +50,10 @@ The static <code>create()</code> method and the constructor both accept addition
 ```php
 // specifying optional return code and headers
 $response = new XmlResponse($data, 202, array('Foo-Header' => 'bar'));
-return $$response;
+return $response;
 ```
 
-** Data array
+## Data array
 
 The data passed to this class should be an associative array. Each array key represents an XML tag name and the array value represents the content of the XML tag.
 
@@ -76,11 +76,14 @@ The array above will produce this XML output:
 </document>
 ```
 
-** Attributes
+## Attributes
 
-You can specify attributes to a tag by passing an specially constructed array for the value of that tag. Within this array, each attribute should be represented
+You can specify attributes to a tag by passing a specially constructed array for the value of that tag. Within this array, each attribute should be represented
 as a key value pair with the key prefixed by '@'. The actual value of the tag should have a key which repeats the original key name. All attribute key-value pairs
 must come before the actual value entry.
+
+Keep in mind, this is crossing some boundaries for an action to supply XML attributes. If this array were rendered as JSON instead of XML, it would probably not
+be usable. This design is flawed and will need to be changed in the future.
 
 ```php
 $data = array(
