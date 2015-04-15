@@ -23,7 +23,22 @@ class XmlResponseTest extends \PHPUnit_Framework_TestCase {
     public function testConstructorWithArrayThrowsException()
     {
         $response = new XmlResponse(array(0, 1, 2, 3));
-        $this->assertContentEquals('not going to get here', $response);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testNonAlphaTagNameThrowsException()
+    {
+        $response = new XmlResponse(array('2foo' => 'bar'));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testNonAlphaTagNameThrowsException2()
+    {
+        $response = new XmlResponse(array('$foo' => 'bar'));
     }
 
     public function testConstructorWithAssocArrayCreatesXmlObject()
@@ -83,6 +98,18 @@ class XmlResponseTest extends \PHPUnit_Framework_TestCase {
         $response->root_element_name = 'pericles';
         $response->setData(['foo' => 'baz']);
         $this->assertContentEquals('<foo>baz</foo>', $response, '', 'pericles');
+    }
+
+    public function testXmlNodeAttributes()
+    {
+        $response = new XmlResponse(array(
+            'foo' => array(
+                '@argle' => 'bargle',
+                '@bing' => 'gong',
+                'foo' => 'bar'
+            )
+        ));
+        $this->assertContentEquals('<foo argle="bargle" bing="gong">bar</foo>', $response);
     }
 
     public function testCreate()
@@ -178,6 +205,7 @@ class XmlResponseTest extends \PHPUnit_Framework_TestCase {
 
     protected function assertContentEquals($expected, $response, $message = '', $wrapper = 'document')
     {
+        // strip line feeds and leading whitespace
         $content = preg_replace('/\n(?:\s)*/', '', $response->getContent());
 
         $this->assertEquals('<?xml version="1.0" encoding="UTF-8"?>', substr($content, 0, 38), 'XML did not begin with proper signature');
@@ -195,7 +223,7 @@ class XmlResponseTest extends \PHPUnit_Framework_TestCase {
 
         } else {
 
-            $this->assertEquals('<' . $wrapper . '/>', $content);
+            $this->assertEquals('<' . $wrapper . '/>', $content, $message);
 
         }
 

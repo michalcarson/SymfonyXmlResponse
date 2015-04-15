@@ -3,8 +3,7 @@
 namespace SymfonyXmlResponse\Responses;
 
 /**
- * Simple XML response writer in the Symfony Response model. It is simple in that it does not allow for attrtibutes
- * on the XML tags.
+ * Simple XML response writer in the Symfony Response model.
  *
  * For the origin of much of this code, @see http://php.net/manual/en/ref.xmlwriter.php. Proper credit should go
  * to massimo71, Alexandre Arica and others.
@@ -29,6 +28,12 @@ class XmlResponse extends Response {
      * @var string
      */
     public $root_element_name = 'document';
+
+    /**
+     * File path for XSL Transform file. Will be included in XML header if set.
+     * @var string
+     */
+    public $xslt_file_path = '';
 
     /**
      * Constructor.
@@ -76,8 +81,8 @@ class XmlResponse extends Response {
 
         try {
 
-            $this->startDocument($this->root_element_name);
-            $this->fromArray($data);
+            $this->startDocument($this->root_element_name, $this->xslt_file_path);
+            $this->fromArray($data, $this->root_element_name);
             $this->data = $this->getDocument();
 
         } catch (\Exception $exception) {
@@ -111,7 +116,7 @@ class XmlResponse extends Response {
      * @author Alexandre Arica
      * @param string $prm_rootElementName A root element's name of a current xml document
      * @param string $prm_xsltFilePath Path of a XSLT file.
-     * @access public
+     * @access protected
      * @param null
      */
     protected function startDocument($prm_rootElementName, $prm_xsltFilePath = '')
@@ -132,7 +137,7 @@ class XmlResponse extends Response {
     /**
      * Set an element with a text to a current xml document.
      * @author Alexandre Arica
-     * @access public
+     * @access protected
      * @param string $prm_elementName An element's name
      * @param string $prm_ElementText An element's text
      * @throws \InvalidArgumentException
@@ -143,9 +148,8 @@ class XmlResponse extends Response {
         if (!isset($prm_elementName)) {
             throw new \InvalidArgumentException('Element name cannot be null. ' . var_export($prm_elementName, true));
         }
-        if (is_numeric($prm_elementName)) {
-            throw new \InvalidArgumentException();
-//            throw new \InvalidArgumentException('Element name cannot be entirely numeric. ' . var_export($prm_elementName, true));
+        if (preg_match('/[a-zA-Z]/', substr($prm_elementName, 0, 1)) !== 1) {
+            throw new \InvalidArgumentException('Element name must begin with alpha character. ' . var_export($prm_elementName, true));
         }
         $this->xml_writer->startElement($prm_elementName);
         $this->xml_writer->text($prm_ElementText);
@@ -159,20 +163,29 @@ class XmlResponse extends Response {
      * and a attribute's text in value part.
      * @author Alexandre Arica
      * @author massimo71
-     * @access public
+     * @access protected
      * @param array $prm_array Contains attributes and texts
+     * @param string $prm_name Name of the element described by this array
      * @return null
      */
-    protected function fromArray($prm_array)
+    protected function fromArray($prm_array, $prm_name)
     {
 
         if (is_array($prm_array)) {
 
             foreach ($prm_array as $index => $element) {
+
                 if (is_array($element)) {
                     $this->xml_writer->startElement($index);
-                    $this->fromArray($element);
+                    $this->fromArray($element, $index);
                     $this->xml_writer->endElement();
+
+                } elseif (substr($index, 0, 1) == '@') {
+                    $this->xml_writer->writeAttribute(substr($index, 1), $element);
+
+                } elseif ($index == $prm_name) {
+                    $this->xml_writer->text($element);
+
                 } else {
                     $this->setElement($index, $element);
                 }
@@ -185,7 +198,7 @@ class XmlResponse extends Response {
     /**
      * Return the content of a current xml document.
      * @author Alexandre Arica
-     * @access public
+     * @access protected
      * @param null
      * @return string Xml document
      */
