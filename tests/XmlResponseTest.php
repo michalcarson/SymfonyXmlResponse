@@ -77,6 +77,14 @@ class XmlResponseTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('application/vnd.acme.blog-v1+xml', $response->headers->get('Content-Type'));
     }
 
+    public function testChangingRootElementName()
+    {
+        $response = new XmlResponse();
+        $response->root_element_name = 'pericles';
+        $response->setData(['foo' => 'baz']);
+        $this->assertContentEquals('<foo>baz</foo>', $response, '', 'pericles');
+    }
+
     public function testCreate()
     {
         $response = XmlResponse::create(array('foo' => 'bar'), 204);
@@ -160,10 +168,18 @@ class XmlResponseTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('application/vnd.acme.blog-v1+xml', $response->headers->get('Content-Type'));
     }
 
+    public function testStaticCreateChangingRootElementName()
+    {
+        $response = XmlResponse::create();
+        $response->root_element_name = 'pericles';
+        $response->setData(['foo' => 'baz']);
+        $this->assertContentEquals('<foo>baz</foo>', $response, '', 'pericles');
+    }
+
     protected function assertContentEquals($expected, $response, $message = '', $wrapper = 'document')
     {
         $content = preg_replace('/\n(?:\s)*/', '', $response->getContent());
-        
+
         $this->assertEquals('<?xml version="1.0" encoding="UTF-8"?>', substr($content, 0, 38), 'XML did not begin with proper signature');
         $content = trim(substr($content, 38));
 
