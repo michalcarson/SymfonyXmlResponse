@@ -6,7 +6,6 @@
  * @author Michal Carson <michal.carson@carsonsoftwareengineering.com>
  */
 
-require '../vendor/autoload.php';
 use SymfonyXmlResponse\Responses\XmlResponse;
 
 class XmlResponseTest extends \PHPUnit_Framework_TestCase {
