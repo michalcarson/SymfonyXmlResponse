@@ -56,7 +56,7 @@
             <arg value="-l" />
 
             <fileset dir="${basedir}">
-                <include name="**/*.php" />
+                <include name="XmlResponse.php" />
                 <modified />
             </fileset>
 
@@ -74,7 +74,7 @@
             description="Measure project size using PHPLOC and print human readable output. Intended for usage on the command line.">
         <exec executable="${toolsdir}phploc" taskname="phploc">
             <arg value="--count-tests" />
-            <arg path="${basedir}" />
+            <arg path="${basedir}/XmlResponse.php" />
             <arg path="${basedir}/tests" />
         </exec>
 
@@ -91,7 +91,7 @@
             <arg path="${basedir}/build/logs/phploc.csv" />
             <arg value="--log-xml" />
             <arg path="${basedir}/build/logs/phploc.xml" />
-            <arg path="${basedir}" />
+            <arg path="${basedir}/XmlResponse.php" />
             <arg path="${basedir}/tests" />
         </exec>
 
@@ -106,7 +106,7 @@
             <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
             <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
             <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
-            <arg path="${basedir}" />
+            <arg path="${basedir}/XmlResponse.php" />
         </exec>
 
         <property name="pdepend.done" value="true"/>
@@ -116,7 +116,7 @@
             unless="phpmd.done"
             description="Perform project mess detection using PHPMD and print human readable output. Intended for usage on the command line before committing.">
         <exec executable="${toolsdir}phpmd" taskname="phpmd">
-            <arg path="${basedir}" />
+            <arg path="${basedir}/XmlResponse.php" />
             <arg value="text" />
             <arg path="${basedir}/build/phpmd.xml" />
         </exec>
@@ -129,7 +129,7 @@
             depends="prepare"
             description="Perform project mess detection using PHPMD and log result in XML format. Intended for usage within a continuous integration environment.">
         <exec executable="${toolsdir}phpmd" taskname="phpmd">
-            <arg path="${basedir}" />
+            <arg path="${basedir}/XmlResponse.php" />
             <arg value="xml" />
             <arg path="${basedir}/build/phpmd.xml" />
             <arg value="--reportfile" />
@@ -143,10 +143,10 @@
             unless="phpcs.done"
             description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
         <exec executable="${toolsdir}phpcs" taskname="phpcs">
-            <arg value="--standard=CSE" />
+            <arg value="--standard=PSR2" />
             <arg value="--extensions=php" />
             <arg value="--ignore=autoload.php" />
-            <arg path="${basedir}" />
+            <arg path="${basedir}/XmlResponse.php" />
             <arg path="${basedir}/tests" />
         </exec>
 
@@ -160,10 +160,10 @@
         <exec executable="${toolsdir}phpcs" output="/dev/null" taskname="phpcs">
             <arg value="--report=checkstyle" />
             <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
-            <arg value="--standard=CSE" />
+            <arg value="--standard=PSR2" />
             <arg value="--extensions=php" />
             <arg value="--ignore=autoload.php" />
-            <arg path="${basedir}" />
+            <arg path="${basedir}/XmlResponse.php" />
         </exec>
 
         <property name="phpcs.done" value="true"/>
@@ -173,7 +173,7 @@
             unless="phpcpd.done"
             description="Find duplicate code using PHPCPD and print human readable output. Intended for usage on the command line before committing.">
         <exec executable="${toolsdir}phpcpd" taskname="phpcpd">
-            <arg path="${basedir}" />
+            <arg path="${basedir}/XmlResponse.php" />
         </exec>
 
         <property name="phpcpd.done" value="true"/>
@@ -186,7 +186,7 @@
         <exec executable="${toolsdir}phpcpd" taskname="phpcpd">
             <arg value="--log-pmd" />
             <arg path="${basedir}/build/logs/pmd-cpd.xml" />
-            <arg path="${basedir}" />
+            <arg path="${basedir}/XmlResponse.php" />
         </exec>
 
         <property name="phpcpd.done" value="true"/>
