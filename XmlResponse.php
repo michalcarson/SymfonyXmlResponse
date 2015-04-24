@@ -13,7 +13,8 @@ namespace SymfonyXmlResponse\Responses;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class XmlResponse extends Response {
+class XmlResponse extends Response
+{
 
     protected $data = '';
 
@@ -78,7 +79,6 @@ class XmlResponse extends Response {
      */
     public function setData($data = array())
     {
-
         try {
 
             $this->startDocument($this->root_element_name, $this->xslt_file_path);
@@ -100,7 +100,6 @@ class XmlResponse extends Response {
      */
     protected function update()
     {
-
         // Only set the header when there is none
         // in order to not overwrite a custom definition.
         if (!$this->headers->has('Content-Type')) {
@@ -149,7 +148,9 @@ class XmlResponse extends Response {
             throw new \InvalidArgumentException('Element name cannot be null. ' . var_export($prm_elementName, true));
         }
         if (preg_match('/[a-zA-Z]/', substr($prm_elementName, 0, 1)) !== 1) {
-            throw new \InvalidArgumentException('Element name must begin with alpha character. ' . var_export($prm_elementName, true));
+            throw new \InvalidArgumentException(
+                    'Element name must begin with alpha character. ' . var_export($prm_elementName, true)
+            );
         }
         $this->xml_writer->startElement($prm_elementName);
         $this->xml_writer->text($prm_ElementText);
@@ -170,11 +171,9 @@ class XmlResponse extends Response {
      */
     protected function fromArray($prm_array, $prm_name)
     {
-
         if (is_array($prm_array)) {
 
             foreach ($prm_array as $index => $element) {
-
                 if (is_array($element)) {
                     $this->xml_writer->startElement($index);
                     $this->fromArray($element, $index);
@@ -209,5 +208,4 @@ class XmlResponse extends Response {
         return $this->xml_writer->outputMemory();
 
     }
-
 }
