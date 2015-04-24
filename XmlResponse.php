@@ -80,7 +80,6 @@ class XmlResponse extends Response
     public function setData($data = array())
     {
         try {
-
             $this->startDocument($this->root_element_name, $this->xslt_file_path);
             $this->fromArray($data, $this->root_element_name);
             $this->data = $this->getDocument();
@@ -149,7 +148,7 @@ class XmlResponse extends Response
         }
         if (preg_match('/[a-zA-Z]/', substr($prm_elementName, 0, 1)) !== 1) {
             throw new \InvalidArgumentException(
-                    'Element name must begin with alpha character. ' . var_export($prm_elementName, true)
+                'Element name must begin with alpha character. ' . var_export($prm_elementName, true)
             );
         }
         $this->xml_writer->startElement($prm_elementName);
@@ -172,7 +171,6 @@ class XmlResponse extends Response
     protected function fromArray($prm_array, $prm_name)
     {
         if (is_array($prm_array)) {
-
             foreach ($prm_array as $index => $element) {
                 if (is_array($element)) {
                     $this->xml_writer->startElement($index);
