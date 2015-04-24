@@ -25,7 +25,7 @@ $response = $xr->setData($data);
 return $response;
 ```
 
-In the code above, $data is an array and $view is a string.
+In the code above, <code>$data</code> is an array and <code>$view</code> is a string.
 
 If the default root element name ("document") is acceptable, this can be further simplified to:
 
