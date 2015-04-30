@@ -10,7 +10,6 @@ namespace SymfonyXmlResponse\Responses;
  *
  * @author Michal Carson <michal.carson@carsonsoftwareengineering.com>
  */
-
 use Symfony\Component\HttpFoundation\Response;
 
 class XmlResponse extends Response
