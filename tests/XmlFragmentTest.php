@@ -8,7 +8,7 @@
 
 use SymfonyXmlResponse\Responses\XmlResponse;
 
-class XmlResponseTest extends \PHPUnit_Framework_TestCase
+class XmlFragmentTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetFragmentFromArray()
     {
