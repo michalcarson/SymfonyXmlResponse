@@ -36,6 +36,13 @@ class XmlResponse extends Response
     public $xslt_file_path = '';
 
     /**
+     * Array of objects that implement the XmlDecoratorInterface, each of which
+     * will be run as the content is rendered.
+     * @var array
+     */
+    protected $decorators = array();
+
+    /**
      * Constructor.
      *
      * @param mixed $data    The response data
@@ -204,5 +211,68 @@ class XmlResponse extends Response
         $this->xml_writer->endDocument();
         return $this->xml_writer->outputMemory();
 
+    }
+
+    /**
+     * Return an XML fragment (rather than a fully formated XML file).
+     *
+     * @param string $name      outermost element name
+     * @param mixed $content    array or string content for the element
+     * @return string
+     */
+    public function getFragment($name, $content)
+    {
+        $this->xml_writer->openMemory();
+        $this->xml_writer->setIndent(true);
+        $this->xml_writer->setIndentString(' ');
+
+        if (is_array($content)) {
+
+            $this->xml_writer->startElement($name);
+            $this->fromArray($content, $name);
+            $this->xml_writer->endElement();
+
+        } else {
+
+            $this->setElement($name, $content);
+
+        }
+
+        return $this->xml_writer->outputMemory();
+    }
+
+    /**
+     * Sends content for the current web response.
+     * Process all decorators before sending the content.
+     *
+     * @return Response
+     */
+    public function sendContent()
+    {
+        foreach ($this->decorators as $decor) {
+            $this->content = $decor->run($this->content);
+        }
+
+        return parent::sendContent();
+    }
+
+    /**
+     * Add a decorator to the stack.
+     *
+     * @param XmlDecoratorInterface $decorator
+     */
+    public function addDecorator(XmlDecoratorInterface $decorator)
+    {
+        $this->decorators[] = $decorator;
+    }
+
+    /**
+     * Retrieve the decorator stack for inspection.
+     *
+     * @return array
+     */
+    public function getDecorators()
+    {
+        return $this->decorators;
     }
 }
