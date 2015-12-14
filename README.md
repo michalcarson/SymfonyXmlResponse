@@ -107,3 +107,55 @@ The array above will produce this XML output:
   <argle>bargle</argle>
 </document>
 ```
+
+## Repeating Elements
+
+XML can have repeating elements.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <lorem>ipsum</lorem>
+  <files>
+    <file><name>file1.txt</name><size>10K</size></file>
+    <file><name>file2.txt</name><size>20K</size></file>
+    <file><name>file3.txt</name><size>8K</size></file>
+  </files>
+  <et>dolore</et>
+</document>
+```
+
+PHP arrays (and JavaScript objects) do not support this without some very contrived structures. In order to support repeating
+fields, use the XmlRepeater class. XmlRepeater acts as a decorator to the XmlResponse class.
+
+You may add as many XmlRepeater instances as you need. Each of them takes a placeholder, an element name and an array of data.
+The class will turn the array into XML, wrap it in an element with the given name and insert it into the XmlResponse result
+in place of the placeholder.
+
+```php
+// associative array for XmlResponse
+$data = [
+    'lorem' => 'ipsum',
+    'files' => '@filesPlaceHolder@'
+    'et' => 'dolore'
+];
+
+// indexed array for the repeating data
+$file_array = [
+    ['name' => 'file1.txt', 'size' => '10K'],
+    ['name' => 'file2.txt', 'size' => '20K'],
+    ['name' => 'file3.txt', 'size' => '8K']
+];
+
+$repeater = new XmlRepeater('@filesPlaceHolder@', 'file', $file_array);
+
+$response = new XmlResponse($data);
+$response->addDecorator($repeater);
+return $response;
+```
+
+This code would produce the XML document above with repeating "file" elements inside the "files" element.
+
+## License
+
+Licensed under the MIT license.
