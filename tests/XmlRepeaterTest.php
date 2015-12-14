@@ -12,6 +12,13 @@ class XmlRepeaterTest extends \PHPUnit_Framework_TestCase
 {
     public function testRepeaterText()
     {
+        $rep = new XmlRepeater('@place@', 'element', ['stuff']);
+        $result = $rep->run('<elements>@place@</elements>');
+        $this->assertFragmentEquals('<element>stuff</element>', $result, '', 'elements');
+    }
+
+    public function testRepeaterMultipleText()
+    {
         $rep = new XmlRepeater('@place@', 'element', ['stuff', 'more stuff']);
         $result = $rep->run('<elements>@place@</elements>');
         $this->assertFragmentEquals('<element>stuff</element><element>more stuff</element>', $result, '', 'elements');

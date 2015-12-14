@@ -260,10 +260,13 @@ class XmlResponse extends Response
      * Add a decorator to the stack.
      *
      * @param XmlDecoratorInterface $decorator
+     * @return XmlResponse
      */
     public function addDecorator(XmlDecoratorInterface $decorator)
     {
         $this->decorators[] = $decorator;
+
+        return $this;
     }
 
     /**
