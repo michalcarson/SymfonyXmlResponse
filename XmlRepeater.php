@@ -3,15 +3,24 @@ namespace SymfonyXmlResponse\Responses;
 
 class XmlRepeater implements XmlDecoratorInterface
 {
+    /** @var mixed */
     protected $placeholder;
+
+    /** @var string */
     protected $repeatingElement;
+
+    /** @var array */
     protected $repeatingData;
+
+    /** @var boolean */
+    private $success = false;
 
     /**
      * XmlRepeater constructor.
-     * @param string $placeholder   marker to look for in the content and replace with new (repeating) content
-     * @param string $repeatingElement  name of the XML element that repeats
-     * @param array $repeatingData  indexed array of repeating data
+     *
+     * @param string $placeholder      Marker to look for in the content and replace with new (repeating) content.
+     * @param string $repeatingElement Name of the XML element that repeats.
+     * @param array  $repeatingData    Indexed array of repeating data.
      */
     public function __construct($placeholder, $repeatingElement, array $repeatingData)
     {
@@ -36,6 +45,19 @@ class XmlRepeater implements XmlDecoratorInterface
             $xml[] = $xr->getFragment($this->repeatingElement, $item);
         }
 
-        return str_replace($this->placeholder, implode("\n", $xml), $content);
+        $replacements = 0;
+        $content = str_replace($this->placeholder, implode("\n", $xml), $content, $replacements);
+
+        $this->success = $replacements > 0;
+
+        return $content;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSuccess()
+    {
+        return $this->success;
     }
 }

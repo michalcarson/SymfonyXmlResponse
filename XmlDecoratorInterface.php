@@ -11,4 +11,11 @@ interface XmlDecoratorInterface
      * @return string
      */
     public function run($content);
+
+    /**
+     * Returns a boolean value indicating whether the decorator succeeded.
+     *
+     * @return boolean
+     */
+    public function isSuccess();
 }

@@ -7,7 +7,6 @@
  */
 
 use SymfonyXmlResponse\Responses\XmlResponse;
-use SymfonyXmlResponse\Responses\XmlDecoratorInterface;
 
 class XmlDecoratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,16 +36,22 @@ class XmlDecoratorTest extends \PHPUnit_Framework_TestCase
     {
         $dec1 = Mockery::mock('SymfonyXmlResponse\Responses\XmlDecoratorInterface');
         $dec1->shouldReceive('run')->once()->andReturn('stuff1');
+        $dec1->shouldReceive('isSuccess')->andReturn(true);
         $dec2 = Mockery::mock('SymfonyXmlResponse\Responses\XmlDecoratorInterface');
         $dec2->shouldReceive('run')->once()->andReturn('stuff2');
+        $dec2->shouldReceive('isSuccess')->andReturn(true);
         $dec3 = Mockery::mock('SymfonyXmlResponse\Responses\XmlDecoratorInterface');
         $dec3->shouldReceive('run')->once()->andReturn('stuff3');
+        $dec3->shouldReceive('isSuccess')->andReturn(true);
 
         $xr = new XmlResponse();
         $xr->addDecorator($dec1);
         $xr->addDecorator($dec2);
         $xr->addDecorator($dec3);
+
+        ob_start();
         $response = $xr->sendContent();
+        ob_end_clean();
 
         $this->assertEquals('stuff3', $response->getContent());
     }

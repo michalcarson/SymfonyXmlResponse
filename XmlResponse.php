@@ -38,7 +38,7 @@ class XmlResponse extends Response
     /**
      * Array of objects that implement the XmlDecoratorInterface, each of which
      * will be run as the content is rendered.
-     * @var array
+     * @var XmlDecoratorInterface[]
      */
     protected $decorators = array();
 
@@ -249,8 +249,15 @@ class XmlResponse extends Response
      */
     public function sendContent()
     {
-        foreach ($this->decorators as $decor) {
+        while (list($key, $decor) = each($this->decorators)) {
+            /** @var $decor XmlDecoratorInterface */
             $this->content = $decor->run($this->content);
+
+            if ($decor->isSuccess()) {
+                unset($this->decorators[$key]);
+                reset($this->decorators);
+            }
+
         }
 
         return parent::sendContent();
