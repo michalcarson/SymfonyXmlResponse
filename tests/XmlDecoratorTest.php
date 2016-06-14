@@ -48,7 +48,10 @@ class XmlDecoratorTest extends \PHPUnit_Framework_TestCase
         $xr->addDecorator($dec1);
         $xr->addDecorator($dec2);
         $xr->addDecorator($dec3);
+
+        ob_start();
         $response = $xr->sendContent();
+        ob_end_clean();
 
         $this->assertEquals('stuff3', $response->getContent());
     }
